@@ -17,3 +17,6 @@ export interface Order {
   total_amount: number
   created_at: string
 }
+
+export type OrderStatusFilter = OrderStatus | 'all'
+export type PaymentMethodFilter = PaymentMethod | 'all'
