@@ -54,6 +54,13 @@ export function OrdersPage() {
         onReset={handleResetFilters}
       />
 
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-slate-500">
+          Showing <span className="font-medium text-slate-900">{filteredOrders.length}</span>{' '}
+          {filteredOrders.length === 1 ? 'order' : 'orders'}
+        </p>
+      </div>
+
       {filteredOrders.length > 0 ? (
         <OrdersTable orders={filteredOrders} />
       ) : (
