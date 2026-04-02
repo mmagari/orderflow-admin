@@ -1,3 +1,6 @@
+import { OrdersTable } from '../components/orders/OrdersTable'
+import { ordersMock } from '../data/orders'
+
 export function OrdersPage() {
   return (
     <div className="space-y-6">
@@ -8,11 +11,7 @@ export function OrdersPage() {
         </p>
       </header>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <p className="text-sm text-slate-500">
-          Orders table will be added here.
-        </p>
-      </section>
+      <OrdersTable orders={ordersMock} />
     </div>
   )
 }
