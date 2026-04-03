@@ -1,5 +1,6 @@
 import type {
   OrderStatusFilter,
+  OrdersSortOption,
   PaymentMethodFilter,
 } from '../../types/order'
 
@@ -7,9 +8,11 @@ type OrdersFiltersProps = {
   search: string
   status: OrderStatusFilter
   paymentMethod: PaymentMethodFilter
+  sortBy: OrdersSortOption
   onSearchChange: (value: string) => void
   onStatusChange: (value: OrderStatusFilter) => void
   onPaymentMethodChange: (value: PaymentMethodFilter) => void
+  onSortChange: (value: OrdersSortOption) => void
   onReset: () => void
 }
 
@@ -17,14 +20,16 @@ export function OrdersFilters({
   search,
   status,
   paymentMethod,
+  sortBy,
   onSearchChange,
   onStatusChange,
   onPaymentMethodChange,
+  onSortChange,
   onReset,
 }: OrdersFiltersProps) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="grid gap-4 lg:grid-cols-[1.5fr_1fr_1fr_auto]">
+      <div className="grid gap-4 xl:grid-cols-[1.5fr_1fr_1fr_1fr_auto]">
         <div>
           <label
             htmlFor="search"
@@ -85,6 +90,30 @@ export function OrdersFilters({
             <option value="card">Card</option>
             <option value="paypal">PayPal</option>
             <option value="cash">Cash</option>
+          </select>
+        </div>
+
+        <div>
+          <label
+            htmlFor="sortBy"
+            className="mb-2 block text-sm font-medium text-slate-700"
+          >
+            Sort by
+          </label>
+          <select
+            id="sortBy"
+            value={sortBy}
+            onChange={(event) =>
+              onSortChange(event.target.value as OrdersSortOption)
+            }
+            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-slate-900"
+          >
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="total-desc">Highest total</option>
+            <option value="total-asc">Lowest total</option>
+            <option value="customer-asc">Customer A-Z</option>
+            <option value="customer-desc">Customer Z-A</option>
           </select>
         </div>
 
