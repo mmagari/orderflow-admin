@@ -31,6 +31,9 @@ export function OrdersTable({ orders }: OrdersTableProps) {
               <th className="px-6 py-4 text-sm font-semibold text-slate-600">
                 Status
               </th>
+              <th className="px-6 py-4 text-sm font-semibold text-slate-600">
+                Actions
+              </th>
             </tr>
           </thead>
 
@@ -67,6 +70,15 @@ export function OrdersTable({ orders }: OrdersTableProps) {
 
                 <td className="px-6 py-4">
                   <OrderStatusBadge status={order.status} />
+                </td>
+
+                <td className="px-6 py-4">
+                  <button
+                    type="button"
+                    className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+                  >
+                    View
+                  </button>
                 </td>
               </tr>
             ))}
