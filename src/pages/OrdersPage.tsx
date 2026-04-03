@@ -3,7 +3,7 @@ import { OrdersEmptyState } from '../components/orders/OrdersEmptyState'
 import { OrdersFilters } from '../components/orders/OrdersFilters'
 import { OrdersPagination } from '../components/orders/OrdersPagination'
 import { OrdersTable } from '../components/orders/OrdersTable'
-import { ordersMock } from '../data/orders'
+import { useOrdersStore } from '../store/useOrdersStore'
 import type {
   OrderStatusFilter,
   OrdersSortOption,
@@ -13,6 +13,8 @@ import type {
 const ORDERS_PER_PAGE = 4
 
 export function OrdersPage() {
+  const orders = useOrdersStore((state) => state.getOrders())
+
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState<OrderStatusFilter>('all')
   const [paymentMethod, setPaymentMethod] =
@@ -23,7 +25,7 @@ export function OrdersPage() {
   const filteredOrders = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase()
 
-    const filtered = ordersMock.filter((order) => {
+    const filtered = orders.filter((order) => {
       const matchesSearch =
         normalizedSearch === '' ||
         order.order_number.toLowerCase().includes(normalizedSearch) ||
@@ -59,7 +61,7 @@ export function OrdersPage() {
           return 0
       }
     })
-  }, [search, status, paymentMethod, sortBy])
+  }, [orders, search, status, paymentMethod, sortBy])
 
   const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ORDERS_PER_PAGE))
   const safeCurrentPage = Math.min(currentPage, totalPages)
