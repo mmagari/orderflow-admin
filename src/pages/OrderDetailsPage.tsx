@@ -1,12 +1,24 @@
 import { Link, useParams } from 'react-router-dom'
 import { OrderStatusBadge } from '../components/orders/OrderStatusBadge'
-import { orderDetailsMock } from '../data/orderDetails'
+import { OrderStatusSelect } from '../components/orders/OrderStatusSelect'
 import { formatCurrency, formatDate } from '../lib/formatters'
+import { useOrdersStore } from '../store/useOrdersStore'
+import type { OrderStatus } from '../types/order'
 
 export function OrderDetailsPage() {
   const { id } = useParams()
+  const getOrderById = useOrdersStore((state) => state.getOrderById)
+  const updateOrderStatus = useOrdersStore((state) => state.updateOrderStatus)
 
-  const order = orderDetailsMock.find((item) => item.id === id)
+  const order = id ? getOrderById(id) : undefined
+
+  function handleStatusChange(value: OrderStatus) {
+    if (!order) {
+      return
+    }
+
+    updateOrderStatus(order.id, value)
+  }
 
   if (!order) {
     return (
@@ -70,24 +82,31 @@ export function OrderDetailsPage() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-sm text-slate-500">Order summary</p>
-          <div className="mt-3 space-y-3 text-sm text-slate-700">
-            <div className="flex items-center justify-between">
-              <span>Status</span>
-              <OrderStatusBadge status={order.status} />
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Payment</span>
-              <span className="capitalize">{order.payment_method}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Total</span>
-              <span className="font-semibold text-slate-900">
-                {formatCurrency(order.total_amount)}
-              </span>
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+          <div>
+            <p className="text-sm text-slate-500">Order summary</p>
+            <div className="mt-3 space-y-3 text-sm text-slate-700">
+              <div className="flex items-center justify-between">
+                <span>Status</span>
+                <OrderStatusBadge status={order.status} />
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Payment</span>
+                <span className="capitalize">{order.payment_method}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Total</span>
+                <span className="font-semibold text-slate-900">
+                  {formatCurrency(order.total_amount)}
+                </span>
+              </div>
             </div>
           </div>
+
+          <OrderStatusSelect
+            value={order.status}
+            onChange={handleStatusChange}
+          />
         </div>
       </section>
 
