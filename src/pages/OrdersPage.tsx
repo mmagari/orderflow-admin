@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { OrdersEmptyState } from '../components/orders/OrdersEmptyState'
 import { OrdersFilters } from '../components/orders/OrdersFilters'
 import { OrdersPagination } from '../components/orders/OrdersPagination'
@@ -61,24 +61,35 @@ export function OrdersPage() {
     })
   }, [search, status, paymentMethod, sortBy])
 
-  const totalPages = Math.ceil(filteredOrders.length / ORDERS_PER_PAGE)
+  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ORDERS_PER_PAGE))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
 
   const paginatedOrders = useMemo(() => {
-    const startIndex = (currentPage - 1) * ORDERS_PER_PAGE
+    const startIndex = (safeCurrentPage - 1) * ORDERS_PER_PAGE
     const endIndex = startIndex + ORDERS_PER_PAGE
 
     return filteredOrders.slice(startIndex, endIndex)
-  }, [filteredOrders, currentPage])
+  }, [filteredOrders, safeCurrentPage])
 
-  useEffect(() => {
+  function handleSearchChange(value: string) {
+    setSearch(value)
     setCurrentPage(1)
-  }, [search, status, paymentMethod, sortBy])
+  }
 
-  useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(totalPages)
-    }
-  }, [currentPage, totalPages])
+  function handleStatusChange(value: OrderStatusFilter) {
+    setStatus(value)
+    setCurrentPage(1)
+  }
+
+  function handlePaymentMethodChange(value: PaymentMethodFilter) {
+    setPaymentMethod(value)
+    setCurrentPage(1)
+  }
+
+  function handleSortChange(value: OrdersSortOption) {
+    setSortBy(value)
+    setCurrentPage(1)
+  }
 
   function handleResetFilters() {
     setSearch('')
@@ -86,6 +97,10 @@ export function OrdersPage() {
     setPaymentMethod('all')
     setSortBy('newest')
     setCurrentPage(1)
+  }
+
+  function handlePageChange(page: number) {
+    setCurrentPage(page)
   }
 
   return (
@@ -102,10 +117,10 @@ export function OrdersPage() {
         status={status}
         paymentMethod={paymentMethod}
         sortBy={sortBy}
-        onSearchChange={setSearch}
-        onStatusChange={setStatus}
-        onPaymentMethodChange={setPaymentMethod}
-        onSortChange={setSortBy}
+        onSearchChange={handleSearchChange}
+        onStatusChange={handleStatusChange}
+        onPaymentMethodChange={handlePaymentMethodChange}
+        onSortChange={handleSortChange}
         onReset={handleResetFilters}
       />
 
@@ -119,7 +134,7 @@ export function OrdersPage() {
         {filteredOrders.length > 0 && (
           <p className="text-sm text-slate-500">
             Current page:{' '}
-            <span className="font-medium text-slate-900">{currentPage}</span>
+            <span className="font-medium text-slate-900">{safeCurrentPage}</span>
           </p>
         )}
       </div>
@@ -128,9 +143,9 @@ export function OrdersPage() {
         <>
           <OrdersTable orders={paginatedOrders} />
           <OrdersPagination
-            currentPage={currentPage}
+            currentPage={safeCurrentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
+            onPageChange={handlePageChange}
           />
         </>
       ) : (
