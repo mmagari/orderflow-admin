@@ -1,19 +1,17 @@
 import { Link } from 'react-router-dom'
 import { OrderStatusBadge } from '../components/orders/OrderStatusBadge'
-import { ordersMock } from '../data/orders'
 import { formatCurrency, formatDate } from '../lib/formatters'
+import { useOrdersStore } from '../store/useOrdersStore'
 
 export function DashboardPage() {
-  const totalOrders = ordersMock.length
-  const pendingOrders = ordersMock.filter(
-    (order) => order.status === 'pending',
-  ).length
-  const shippedOrders = ordersMock.filter(
-    (order) => order.status === 'shipped',
-  ).length
-  const revenue = ordersMock.reduce((sum, order) => sum + order.total_amount, 0)
+  const orders = useOrdersStore((state) => state.getOrders())
 
-  const recentOrders = [...ordersMock]
+  const totalOrders = orders.length
+  const pendingOrders = orders.filter((order) => order.status === 'pending').length
+  const shippedOrders = orders.filter((order) => order.status === 'shipped').length
+  const revenue = orders.reduce((sum, order) => sum + order.total_amount, 0)
+
+  const recentOrders = [...orders]
     .sort(
       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     )
