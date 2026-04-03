@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { formatCurrency, formatDate } from '../../lib/formatters'
 import type { Order } from '../../types/order'
 import { OrderStatusBadge } from './OrderStatusBadge'
@@ -73,12 +74,12 @@ export function OrdersTable({ orders }: OrdersTableProps) {
                 </td>
 
                 <td className="px-6 py-4">
-                  <button
-                    type="button"
-                    className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+                  <Link
+                    to={`/orders/${order.id}`}
+                    className="inline-flex rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
                   >
                     View
-                  </button>
+                  </Link>
                 </td>
               </tr>
             ))}
