@@ -7,10 +7,11 @@ import type { OrderStatus } from '../types/order'
 
 export function OrderDetailsPage() {
   const { id } = useParams()
-  const getOrderById = useOrdersStore((state) => state.getOrderById)
+
+  const orders = useOrdersStore((state) => state.orders)
   const updateOrderStatus = useOrdersStore((state) => state.updateOrderStatus)
 
-  const order = id ? getOrderById(id) : undefined
+  const order = orders.find((item) => item.id === id)  
 
   function handleStatusChange(value: OrderStatus) {
     if (!order) {

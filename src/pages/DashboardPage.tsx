@@ -4,8 +4,8 @@ import { formatCurrency, formatDate } from '../lib/formatters'
 import { useOrdersStore } from '../store/useOrdersStore'
 
 export function DashboardPage() {
-  const orders = useOrdersStore((state) => state.getOrders())
-
+  const orders = useOrdersStore((state) => state.orders)
+  
   const totalOrders = orders.length
   const pendingOrders = orders.filter((order) => order.status === 'pending').length
   const shippedOrders = orders.filter((order) => order.status === 'shipped').length

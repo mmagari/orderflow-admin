@@ -13,7 +13,31 @@ import type {
 const ORDERS_PER_PAGE = 4
 
 export function OrdersPage() {
-  const orders = useOrdersStore((state) => state.getOrders())
+  const ordersDetails = useOrdersStore((state) => state.orders)
+
+  const orders = useMemo(() => {
+    return ordersDetails.map(
+      ({
+        id,
+        order_number,
+        customer_name,
+        customer_email,
+        status,
+        payment_method,
+        total_amount,
+        created_at,
+      }) => ({
+        id,
+        order_number,
+        customer_name,
+        customer_email,
+        status,
+        payment_method,
+        total_amount,
+        created_at,
+      }),
+    )
+  }, [ordersDetails])
 
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState<OrderStatusFilter>('all')
