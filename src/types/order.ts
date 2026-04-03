@@ -20,3 +20,11 @@ export interface Order {
 
 export type OrderStatusFilter = OrderStatus | 'all'
 export type PaymentMethodFilter = PaymentMethod | 'all'
+
+export type OrdersSortOption =
+  | 'newest'
+  | 'oldest'
+  | 'total-desc'
+  | 'total-asc'
+  | 'customer-asc'
+  | 'customer-desc'
