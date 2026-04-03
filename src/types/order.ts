@@ -18,6 +18,19 @@ export interface Order {
   created_at: string
 }
 
+export interface OrderItem {
+  id: string
+  product_name: string
+  quantity: number
+  unit_price: number
+}
+
+export interface OrderDetails extends Order {
+  customer_phone: string
+  shipping_address: string
+  items: OrderItem[]
+}
+
 export type OrderStatusFilter = OrderStatus | 'all'
 export type PaymentMethodFilter = PaymentMethod | 'all'
 
