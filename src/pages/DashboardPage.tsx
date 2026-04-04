@@ -2,10 +2,12 @@ import { Link } from 'react-router-dom'
 import { OrderStatusBadge } from '../components/orders/OrderStatusBadge'
 import { formatCurrency, formatDate } from '../lib/formatters'
 import { useOrdersStore } from '../store/useOrdersStore'
+import toast from 'react-hot-toast'
 
 export function DashboardPage() {
   const orders = useOrdersStore((state) => state.orders)
-  
+  const resetOrders = useOrdersStore((state) => state.resetOrders)
+
   const totalOrders = orders.length
   const pendingOrders = orders.filter((order) => order.status === 'pending').length
   const shippedOrders = orders.filter((order) => order.status === 'shipped').length
@@ -24,13 +26,28 @@ export function DashboardPage() {
     { label: 'Revenue', value: formatCurrency(revenue) },
   ]
 
+  function handleResetDemoData() {
+    resetOrders()
+    toast.success('Demo data has been reset')
+  }
+
   return (
     <div className="space-y-6">
-      <header>
-        <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-        <p className="mt-1 text-sm text-slate-500">
-          Overview of orders and store activity.
-        </p>
+      <header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Overview of orders and store activity.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleResetDemoData}
+          className="inline-flex rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+        >
+          Reset demo data
+        </button>
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
