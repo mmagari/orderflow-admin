@@ -4,6 +4,7 @@ import { OrderStatusSelect } from '../components/orders/OrderStatusSelect'
 import { formatCurrency, formatDate } from '../lib/formatters'
 import { useOrdersStore } from '../store/useOrdersStore'
 import toast from 'react-hot-toast'
+import { formatStatusLabel } from '../lib/formatters'
 import type { OrderStatus } from '../types/order'
 
 export function OrderDetailsPage() {
@@ -25,7 +26,7 @@ export function OrderDetailsPage() {
     }
 
     updateOrderStatus(order.id, value)
-    toast.success(`Order status updated to ${value}`)
+    toast.success(`Order status updated to ${formatStatusLabel(value)}`)
   }
 
   if (!order) {

@@ -11,3 +11,7 @@ export function formatDate(dateString: string) {
     timeStyle: 'short',
   }).format(new Date(dateString))
 }
+
+export function formatStatusLabel(status: string) {
+  return status.charAt(0).toUpperCase() + status.slice(1)
+}
