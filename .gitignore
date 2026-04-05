@@ -125,6 +125,11 @@ dist
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
 # yarn v3
 .pnp.*
 .yarn/*
