@@ -4,6 +4,9 @@ import { formatCurrency, formatDate } from '../lib/formatters'
 import { useOrdersStore } from '../store/useOrdersStore'
 import toast from 'react-hot-toast'
 
+import { useEffect } from 'react'
+import { fetchOrders } from '../api/orders'
+
 export function DashboardPage() {
   const orders = useOrdersStore((state) => state.orders)
   const resetOrders = useOrdersStore((state) => state.resetOrders)
@@ -30,6 +33,12 @@ export function DashboardPage() {
     resetOrders()
     toast.success('Demo data has been reset')
   }
+
+  useEffect(() => {
+  fetchOrders()
+    .then((data) => console.log('Supabase orders:', data))
+    .catch((error) => console.error('Supabase error:', error))
+}, [])
 
   return (
     <div className="space-y-6">
