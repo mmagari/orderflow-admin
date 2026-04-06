@@ -70,7 +70,9 @@ export function DashboardPage() {
           </p>
         </header>
 
-        <p className="text-sm text-red-500">Failed to load dashboard data.</p>
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          Failed to load data. Please try again later.
+        </div>
       </div>
     )
   }
