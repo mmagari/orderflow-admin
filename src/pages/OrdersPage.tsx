@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { fetchOrders } from '../api/orders'
 import { OrdersEmptyState } from '../components/orders/OrdersEmptyState'
 import { OrdersFilters } from '../components/orders/OrdersFilters'
 import { OrdersPagination } from '../components/orders/OrdersPagination'
 import { OrdersTable } from '../components/orders/OrdersTable'
-import { useOrdersStore } from '../store/useOrdersStore'
 import type {
   OrderStatusFilter,
   OrdersSortOption,
@@ -13,31 +14,10 @@ import type {
 const ORDERS_PER_PAGE = 4
 
 export function OrdersPage() {
-  const ordersDetails = useOrdersStore((state) => state.orders)
-
-  const orders = useMemo(() => {
-    return ordersDetails.map(
-      ({
-        id,
-        order_number,
-        customer_name,
-        customer_email,
-        status,
-        payment_method,
-        total_amount,
-        created_at,
-      }) => ({
-        id,
-        order_number,
-        customer_name,
-        customer_email,
-        status,
-        payment_method,
-        total_amount,
-        created_at,
-      }),
-    )
-  }, [ordersDetails])
+  const { data: orders = [], isLoading, isError } = useQuery({
+    queryKey: ['orders'],
+    queryFn: fetchOrders,
+  })
 
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState<OrderStatusFilter>('all')
@@ -87,7 +67,10 @@ export function OrdersPage() {
     })
   }, [orders, search, status, paymentMethod, sortBy])
 
-  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ORDERS_PER_PAGE))
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredOrders.length / ORDERS_PER_PAGE),
+  )
   const safeCurrentPage = Math.min(currentPage, totalPages)
 
   const paginatedOrders = useMemo(() => {
@@ -129,6 +112,36 @@ export function OrdersPage() {
     setCurrentPage(page)
   }
 
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <header>
+          <h2 className="text-3xl font-bold tracking-tight">Orders</h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Manage customer orders, statuses, and details.
+          </p>
+        </header>
+
+        <p className="text-sm text-slate-500">Loading orders...</p>
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <div className="space-y-6">
+        <header>
+          <h2 className="text-3xl font-bold tracking-tight">Orders</h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Manage customer orders, statuses, and details.
+          </p>
+        </header>
+
+        <p className="text-sm text-red-500">Failed to load orders.</p>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <header>
@@ -152,15 +165,23 @@ export function OrdersPage() {
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-slate-500">
-          Showing <span className="font-medium text-slate-900">{paginatedOrders.length}</span>{' '}
-          of <span className="font-medium text-slate-900">{filteredOrders.length}</span>{' '}
+          Showing{' '}
+          <span className="font-medium text-slate-900">
+            {paginatedOrders.length}
+          </span>{' '}
+          of{' '}
+          <span className="font-medium text-slate-900">
+            {filteredOrders.length}
+          </span>{' '}
           {filteredOrders.length === 1 ? 'order' : 'orders'}
         </p>
 
         {filteredOrders.length > 0 && (
           <p className="text-sm text-slate-500">
             Current page:{' '}
-            <span className="font-medium text-slate-900">{safeCurrentPage}</span>
+            <span className="font-medium text-slate-900">
+              {safeCurrentPage}
+            </span>
           </p>
         )}
       </div>
