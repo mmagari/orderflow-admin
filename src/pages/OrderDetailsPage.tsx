@@ -6,6 +6,7 @@ import { OrderStatusBadge } from '../components/orders/OrderStatusBadge'
 import { OrderStatusSelect } from '../components/orders/OrderStatusSelect'
 import { formatCurrency, formatDate, formatStatusLabel } from '../lib/formatters'
 import type { OrderStatus } from '../types/order'
+import { Skeleton } from '../components/ui/Skeleton'
 
 export function OrderDetailsPage() {
   const { id } = useParams()
@@ -93,15 +94,45 @@ export function OrderDetailsPage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div>
-          <p className="text-sm font-medium text-slate-500">Order details</p>
-          <h2 className="mt-1 text-3xl font-bold tracking-tight">
-            Loading order...
-          </h2>
-          <p className="mt-1 text-sm text-slate-500">
-            Please wait while we load the order details.
-          </p>
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-8 w-40" />
+            <Skeleton className="h-4 w-48" />
+          </div>
+
+          <Skeleton className="h-10 w-24" />
         </div>
+
+        <section className="grid gap-4 xl:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div
+              key={index}
+              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+            >
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="mt-4 h-5 w-32" />
+              <Skeleton className="mt-4 h-4 w-40" />
+              <Skeleton className="mt-2 h-4 w-32" />
+            </div>
+          ))}
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <Skeleton className="h-6 w-24" />
+          <Skeleton className="mt-2 h-4 w-52" />
+
+          <div className="mt-6 space-y-4">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="grid grid-cols-4 gap-4">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-4 w-12" />
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-4 w-20" />
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
     )
   }
