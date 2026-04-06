@@ -135,9 +135,10 @@ export function DashboardPage() {
 
         <div className="space-y-4">
           {recentOrders.map((order) => (
-            <div
+            <Link
+              to={`/orders/${order.id}`}
               key={order.id}
-              className="flex flex-col gap-3 rounded-xl border border-slate-200 p-4 lg:flex-row lg:items-center lg:justify-between"
+              className="flex flex-col gap-3 rounded-xl border border-slate-200 p-4 lg:flex-row lg:items-center lg:justify-between transition hover:border-slate-300 hover:bg-slate-50"
             >
               <div>
                 <p className="font-semibold text-slate-900">{order.order_number}</p>
@@ -151,7 +152,7 @@ export function DashboardPage() {
               </div>
 
               <OrderStatusBadge status={order.status} />
-            </div>
+            </Link>
           ))}
         </div>
       </section>
