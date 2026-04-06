@@ -5,6 +5,7 @@ import { OrdersEmptyState } from '../components/orders/OrdersEmptyState'
 import { OrdersFilters } from '../components/orders/OrdersFilters'
 import { OrdersPagination } from '../components/orders/OrdersPagination'
 import { OrdersTable } from '../components/orders/OrdersTable'
+import { Skeleton } from '../components/ui/Skeleton'
 import type {
   OrderStatusFilter,
   OrdersSortOption,
@@ -122,7 +123,33 @@ export function OrdersPage() {
           </p>
         </header>
 
-        <p className="text-sm text-slate-500">Loading orders...</p>
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="grid gap-4 xl:grid-cols-[1.5fr_1fr_1fr_1fr_auto]">
+            <Skeleton className="h-11 w-full" />
+            <Skeleton className="h-11 w-full" />
+            <Skeleton className="h-11 w-full" />
+            <Skeleton className="h-11 w-full" />
+            <Skeleton className="h-11 w-full" />
+          </div>
+        </div>
+
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="space-y-0">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-6 gap-4 border-t border-slate-200 p-6 first:border-t-0"
+              >
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-4 w-28" />
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-6 w-20 rounded-full" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     )
   }
