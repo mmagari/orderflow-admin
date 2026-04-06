@@ -1,19 +1,78 @@
 import { Link, useParams } from 'react-router-dom'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
+import { fetchOrderById, updateOrderStatus } from '../api/orders'
 import { OrderStatusBadge } from '../components/orders/OrderStatusBadge'
 import { OrderStatusSelect } from '../components/orders/OrderStatusSelect'
-import { formatCurrency, formatDate } from '../lib/formatters'
-import { useOrdersStore } from '../store/useOrdersStore'
-import toast from 'react-hot-toast'
-import { formatStatusLabel } from '../lib/formatters'
+import { formatCurrency, formatDate, formatStatusLabel } from '../lib/formatters'
 import type { OrderStatus } from '../types/order'
 
 export function OrderDetailsPage() {
   const { id } = useParams()
+  const queryClient = useQueryClient()
 
-  const orders = useOrdersStore((state) => state.orders)
-  const updateOrderStatus = useOrdersStore((state) => state.updateOrderStatus)
+  const {
+    data: order,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['order', id],
+    queryFn: () => fetchOrderById(id!),
+    enabled: !!id,
+  })
 
-  const order = orders.find((item) => item.id === id)  
+  const mutation = useMutation({
+    mutationFn: ({
+      id,
+      status,
+    }: {
+      id: string
+      status: OrderStatus
+    }) => updateOrderStatus(id, status),
+
+    onSuccess: async (updatedOrder, variables) => {
+      toast.success(
+        `Order status updated to ${formatStatusLabel(variables.status)}`,
+      )
+
+      queryClient.setQueryData(['order', id], (oldData: typeof updatedOrder | undefined) => {
+        if (!oldData) {
+          return oldData
+        }
+
+        return {
+          ...oldData,
+          status: updatedOrder.status,
+        }
+      })
+
+      queryClient.setQueryData(['orders'], (oldData: typeof updatedOrder[] | undefined) => {
+        if (!oldData) {
+          return oldData
+        }
+
+        return oldData.map((order) =>
+          order.id === updatedOrder.id
+            ? { ...order, status: updatedOrder.status }
+            : order,
+        )
+      })
+
+      await queryClient.invalidateQueries({
+        queryKey: ['orders'],
+        refetchType: 'all',
+      })
+
+      await queryClient.invalidateQueries({
+        queryKey: ['order', id],
+        refetchType: 'all',
+      })
+    },
+
+    onError: () => {
+      toast.error('Failed to update order status')
+    },
+  })
 
   function handleStatusChange(value: OrderStatus) {
     if (!order) {
@@ -25,11 +84,29 @@ export function OrderDetailsPage() {
       return
     }
 
-    updateOrderStatus(order.id, value)
-    toast.success(`Order status updated to ${formatStatusLabel(value)}`)
+    mutation.mutate({
+      id: order.id,
+      status: value,
+    })
   }
 
-  if (!order) {
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <p className="text-sm font-medium text-slate-500">Order details</p>
+          <h2 className="mt-1 text-3xl font-bold tracking-tight">
+            Loading order...
+          </h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Please wait while we load the order details.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  if (isError || !order) {
     return (
       <div className="space-y-6">
         <div>
@@ -91,7 +168,7 @@ export function OrderDetailsPage() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+        <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <div>
             <p className="text-sm text-slate-500">Order summary</p>
             <div className="mt-3 space-y-3 text-sm text-slate-700">
@@ -115,6 +192,7 @@ export function OrderDetailsPage() {
           <OrderStatusSelect
             value={order.status}
             onChange={handleStatusChange}
+            disabled={mutation.isPending}
           />
         </div>
       </section>
