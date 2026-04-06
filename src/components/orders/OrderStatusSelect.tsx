@@ -3,6 +3,7 @@ import type { OrderStatus } from '../../types/order'
 type OrderStatusSelectProps = {
   value: OrderStatus
   onChange: (value: OrderStatus) => void
+  disabled?: boolean
 }
 
 const ORDER_STATUS_OPTIONS: OrderStatus[] = [
@@ -16,6 +17,7 @@ const ORDER_STATUS_OPTIONS: OrderStatus[] = [
 export function OrderStatusSelect({
   value,
   onChange,
+  disabled = false,
 }: OrderStatusSelectProps) {
   return (
     <div>
@@ -29,8 +31,9 @@ export function OrderStatusSelect({
       <select
         id="orderStatus"
         value={value}
+        disabled={disabled}
         onChange={(event) => onChange(event.target.value as OrderStatus)}
-        className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-slate-900"
+        className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {ORDER_STATUS_OPTIONS.map((status) => (
           <option key={status} value={status}>
