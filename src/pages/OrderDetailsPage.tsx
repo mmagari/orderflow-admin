@@ -219,12 +219,15 @@ export function OrderDetailsPage() {
               </div>
             </div>
           </div>
-
-          <OrderStatusSelect
+          
+          {/*<OrderStatusSelect
             value={order.status}
             onChange={handleStatusChange}
             disabled={mutation.isPending}
-          />
+          />*/}
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700">
+            *Status editing is disabled in the public demo.
+          </div>
         </div>
       </section>
 
